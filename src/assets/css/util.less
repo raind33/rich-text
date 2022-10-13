@@ -1,0 +1,200 @@
+// Created by wanghui on 2017-04-21.
+@import 'variables';
+//========================= 方法 =========================
+// background
+.background(@url) {
+    background-image: url(@url);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.background2(@url, @position: center, @size: cover) {
+    background: url(@url);
+    background-position-x: @position;
+    background-position-y: @position;
+    background-size: @size;
+}
+
+//宽高
+.wh(@width: auto, @height: auto) {
+    width: @width;
+    height: @height;
+}
+
+//字体大小，颜色
+.sc(@size: 14px, @color: #333) {
+    font-size: @size;
+    color: @color;
+}
+
+// 圆角
+.border-radius(@radius: 5px) {
+    border-radius: @radius;
+}
+
+// 阴影
+.box-shadow(@x: 0, @y: 5px, @blur: 5px, @extend: 5px, @color: gray) {
+    box-shadow: @x @y @blur @extend @color;
+}
+
+// 旋转
+.rotate(@deg: 45deg) {
+    transform: rotate(@deg);
+}
+
+// 动画
+.transition( @attribute: all, @type: ease-in, @time: 200ms) {
+    transition: @attribute @type @time;
+}
+
+// loading 默认样式
+.img-lazy-loading() {
+    img[lazy=loading] {
+        width: .3rem!important;
+        height: .3rem!important;
+    }
+}
+
+// 是否支持文字选择
+.user-select (@user-select: none) {
+    -webkit-user-select: @user-select;
+    -moz-user-select: @user-select;
+    -o-user-select: @user-select;
+    user-select: @user-select;
+}
+
+// flex布局
+.flex() {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+// flex num
+.flex-num(@num: 1) {
+    flex: @num;
+}
+
+// flex-center
+.flex-center(@num: 1, @justify: center, @align: center) {
+    .flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// flex-center-direction  row column
+.flex-center-direction(@direction: row) {
+    .flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: @direction;
+}
+
+// children flex & center
+.flex-num-center(@num: 1, @justify: center, @align: center) {
+    flex: @num;
+    justify-content: @justify;
+    align-items: @align;
+}
+
+// center
+.center(@pack: center, @align: center) {
+  /* autoprefixer: ignore next */
+    -webkit-box-pack: @pack;
+    -webkit-box-align: @align;
+    display: -webkit-box;
+}
+
+.center2() {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.center3() {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+}
+
+.flex-center(@pack: center, @align: center) {
+    display: flex;
+    justify-content: @pack;
+    align-items: @align;
+}
+
+.width-max() {
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+}
+
+// img src 图片居中剪切
+.img--cover(@value: cover) {
+    object-fit: @value;
+}
+
+// 背景图片居中剪切
+.background--cover(@value: cover) {
+    background-size: @value;
+}
+
+// 文字两边对齐
+.text-align--justify(@value: justify) {
+    text-align: @value;
+}
+
+// 换行
+.word-break(@para: break-all) {
+    word-break: @para;
+}
+
+// 英文字符换行
+.english-word-break(@para: break-all) {
+    .word-break;
+    word-wrap: break-word;
+}
+
+// 保持内容不换行，并左右滑动
+.nowrap-scroll(@width: 375px) {
+    display: block;
+    width: @width;
+    white-space: nowrap;
+    overflow: auto;
+}
+
+// white-space
+.white-space(@type: pre) {
+    white-space: @type;
+}
+
+// 单行...
+.dotdotdot1(@text-overflow: ellipsis, @space: nowrap, @overflow: hidden) {
+    -o-text-overflow: @text-overflow;
+    -webkit-text-overflow: @text-overflow;
+    -moz-text-overflow: @text-overflow;
+    text-overflow: @text-overflow;
+    white-space: @space;
+    overflow: @overflow;
+}
+
+// 多行...
+.dotdotdot2(@num: 2) {
+    -o-text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: @num;
+    /*! autoprefixer: off */
+    -webkit-box-orient: vertical;
+    .english-word-break;
+}
