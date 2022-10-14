@@ -3813,9 +3813,9 @@ vite-plugin-dts@^1.5.0:
     fs-extra "^10.0.1"
     ts-morph "^14.0.0"
 
-vite-plugin-vue2@2.6.14:
+vite-plugin-vue2@2.0.2:
   version "2.0.2"
-  resolved "https://registry.npmjs.org/vite-plugin-vue2/-/vite-plugin-vue2-2.0.2.tgz#f9ba9df4f5660935fb63ad94d276d3d03ac07838"
+  resolved "https://registry.npmmirror.com/vite-plugin-vue2/-/vite-plugin-vue2-2.0.2.tgz#f9ba9df4f5660935fb63ad94d276d3d03ac07838"
   integrity sha512-Oo1iwc5Zo376s3MYXqS7j+KXs26EjiyWV8/dmI23SoorO3zaAgnBefR45Zme+QtM407tJ2MVq0mqfI10qA5+LQ==
   dependencies:
     "@babel/core" "^7.17.9"

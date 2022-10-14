@@ -163,6 +163,7 @@ export default {
   watch: {
     progressPercent(val) {
       const inner = document.querySelector('.video-progress .inner')
+      console.log(val, '视频上传进度')
       if (inner) {
         inner.style.width = val + '%'
         if (val === 100) {
@@ -247,7 +248,7 @@ export default {
       me.closeDialog();
       me.loading = true;
       this.editor['insertVideoProgress']()
-      this.$emit('insertVideo', files, (result) => {
+      this.$emit('insertVideo', this, files, (result) => {
         const video = {
           duration: result.duration || '',
           link: result.videoUrl || '',
@@ -258,7 +259,7 @@ export default {
           vodType: result.vodType || '', // 图片尺寸
         }
         me.$emit('updateAddVideo', true)
-        me.editor['insertVideo'](video.sourceVideoUrl, video);
+        me.editor['insertVideo'](result.videoUrl, video);
         me.updateData(true)
       }, (_) => {
         me.setMessageBoxNoCancel(_);
