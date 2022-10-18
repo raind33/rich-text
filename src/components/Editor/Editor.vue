@@ -419,7 +419,7 @@ export default {
               node.appendChild(child)
             })
           } else if (node.classList.contains('halo-video-content')) {
-            this.parseVideo(node)
+            this.parseVideo(node, essayPicRelVOList)
           } else if (node.classList.contains('halo-link')) {
             this.parseLink(node)
           }
@@ -436,8 +436,13 @@ export default {
       node.prepend(img)
       node.appendChild(del)
     },
-    parseVideo(node) {
+    parseVideo(node, essayPicRelVOList) {
       const me = this
+      const video = node.querySelector('.halo-video-area')
+      const videoId = video.src
+      const arr = videoId.split('/')
+      const id = arr[arr.length - 1]
+      video.src = essayPicRelVOList.find(obj => obj.id === String(id)).url
       var delBtn = this.editor.createElement('i', {
         'class': 'pointer video-delete el-icon-error icon',
         'contenteditable': 'false',
