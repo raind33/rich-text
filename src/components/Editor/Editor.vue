@@ -88,6 +88,7 @@ export default {
     CollectArticle
   },
   props: [
+    'disabled',
     'isOss',
     'getEassyDetail',
     'getArticleList',
@@ -407,7 +408,6 @@ export default {
           } else if (node.classList.contains('halo-img-content')) {
             const img = node.querySelector('img')
             const desc = img.dataset.desc
-            console.log(essayPicRelVOList, 99)
             if(essayPicRelVOList) {
               const arr = img.src.split('/')
               const id = arr[arr.length - 1]
@@ -611,6 +611,7 @@ export default {
           placeholder: '请输入图片描述(最多50字)',
           'contenteditable': 'false',
         });
+        descInput.disabled = me.disabled
         descInput.oninput = function(e) {
           const parent = me.findParentByClass(e.target, 'halo-img-content')
           const img = parent.querySelector('.halo-picture-area')
@@ -625,6 +626,7 @@ export default {
           'contenteditable': 'false',
         }, [descInput]);
         replaceBtn.onclick = function(e) {
+          if(me.disabled) return
           // me.removeParentByClass(e.target, 'img-content')
           const current = me.findParentByClass(e.target, 'halo-img-content')
           const range = document.createRange()
@@ -636,6 +638,7 @@ export default {
           replaceInput.click()
         }
         delBtn.onclick = function(e) {
+          if(me.disabled) return
           me.removeParentByClass(e.target, 'halo-img-content')
           me.updateData(true)
         }
@@ -878,6 +881,9 @@ export default {
         setTimeout(() => { editorDom.scrollTop = scrollTop; }, 50);
       };
       me.sticky();
+      if(this.disabled){
+        this.editorDom.contenteditable = 'false'
+      }
     },
     generateDelLinkIcon() {
       const me = this
