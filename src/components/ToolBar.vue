@@ -361,7 +361,8 @@ export default {
   margin-right: 18px;
 }
 .tools{
-
+  z-index: 2;
+  position: relative;
   background: #FAFAFA;
   .tools-content{
     display: flex;

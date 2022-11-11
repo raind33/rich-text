@@ -282,12 +282,11 @@ function hasTagAttributes (node, tag, attributes) {
     if (node.nodeName !== tag) {
         return false;
     }
-    // fix 设置对齐方式后换行，由于初始化富文本传入额外段落类名时导致对齐方式失效
-    // for (var attr in attributes) {
-    //     if (node.getAttribute(attr) !== attributes[ attr ]) {
-    //         return false;
-    //     }
-    // }
+    for (var attr in attributes) {
+        if (node.getAttribute(attr) !== attributes[ attr ]) {
+            return false;
+        }
+    }
     return true;
 }
 function getNearest (node, root, tag, attributes) {
@@ -3724,7 +3723,10 @@ var splitBlock = function (self, block, node, offset) {
 
     if (!splitTag) {
         splitTag = config.blockTag;
-        splitProperties = config.blockAttributes;
+        // fix 由于项目以前维护者把blockAttributes设置了类名，导致hasTagAttributes中校验时匹配有问题
+        var attr = {...config.blockAttributes}
+        delete attr.class
+        splitProperties = attr;
     }
 
     // Make sure the new node is the correct type.
@@ -4101,10 +4103,28 @@ proto._getHTML = function () {
     return this._root.innerHTML;
 };
 
+function fixTextarea(node) {
+    // fix textarea不允许撤回
+    var nodes = node.childNodes
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i]
+        if (node.nodeType === 1) {
+            if (node.classList.contains('halo-img-content')) {
+                var img = node.querySelector('img')
+                var desc = img.dataset.desc
+                var textarea = node.querySelector('textarea')
+                textarea.innerHTML = ''
+                textarea.value = desc || ''
+            }
+        }
+    }
+}
 proto._setHTML = function (html) {
+    
     var root = this._root;
     var node = root;
     node.innerHTML = html;
+    fixTextarea(node)
     do {
         fixCursor(node, root);
     } while (node = getNextBlock(node, root));

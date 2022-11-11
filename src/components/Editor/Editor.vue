@@ -451,17 +451,20 @@ export default {
     },
     parseVideo(node, essayPicRelVOList) {
       const me = this
+      const videoData = JSON.parse(node.dataset.video)
+      
       const video = node.querySelector('.halo-video-area')
       const videoId = video.src
       const arr = videoId.split('/')
       const id = arr[arr.length - 1]
       video.src = essayPicRelVOList.find(obj => obj.id === String(id)).url
-      if(video.poster) {
-        const pArr = video.poster.split('/')
-        const pid = pArr[pArr.length - 1]
-        const poster = essayPicRelVOList.find(obj => obj.id === pid).url
+      videoData.link = video.src
+      if(videoData.img) {
+        const poster = essayPicRelVOList.find(obj => obj.id === videoData.img).url
         video.poster = poster
+        videoData.img = poster
       }
+      node.setAttribute('data-video', JSON.stringify(videoData))
       var delBtn = this.editor.createElement('i', {
         'class': 'pointer video-delete el-icon-error icon',
         'contenteditable': 'false',
