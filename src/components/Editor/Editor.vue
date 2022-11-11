@@ -147,7 +147,11 @@ export default {
         title: false
       },
       contentLen: 0,
-      imgCount: 0
+      imgCount: 0,
+      backState: {
+        redo: false,
+        undo: false
+      }
     };
   },
   computed: {
@@ -173,6 +177,14 @@ export default {
           `
         }
       }
+    },
+    disabled: {
+      handler(val) {
+        if(val){
+          this.editorDom.contentEditable = 'false'
+        }
+      },
+      immediate: true
     }
   },
   created() {
@@ -229,6 +241,7 @@ export default {
       this.contentLen = contentLen
       this.imgCount = imgCount
       this.titleCount = titleCount
+      this.backState = this.editor.getUndoOrRedoState()
       this.$emit('backData', flag, contentLen, imgCount)
     },
     showUploadVideo() {
@@ -443,6 +456,12 @@ export default {
       const arr = videoId.split('/')
       const id = arr[arr.length - 1]
       video.src = essayPicRelVOList.find(obj => obj.id === String(id)).url
+      if(video.poster) {
+        const pArr = video.poster.split('/')
+        const pid = pArr[pArr.length - 1]
+        const poster = essayPicRelVOList.find(obj => obj.id === pid).url
+        video.poster = poster
+      }
       var delBtn = this.editor.createElement('i', {
         'class': 'pointer video-delete el-icon-error icon',
         'contenteditable': 'false',
@@ -767,7 +786,7 @@ export default {
       window.Squire.prototype.insertImages = function (src, data = {}, range) {
         // 1、不处理已上传失败情况了  2、每次粘贴或缓存获取，重新计算待上传图片
         var isHaloImage = me.isHaloImage(src)
-        var scrollTop = editorDom.scrollTop;
+        var scrollTop = document.documentElement.scrollTop;
 
         // todowh 撤回记录滚动位置
         var loading = this.createElement('div', {
@@ -814,7 +833,7 @@ export default {
           'contenteditable': 'false'
         }, [...childList]);
         this.insertElement(p, range);
-        setTimeout(() => { editorDom.scrollTop = scrollTop; }, 50);
+        setTimeout(() => { document.documentElement.scrollTop = scrollTop; }, 50);
       };
       window.Squire.prototype.insertVideoProgress = function() {
         const div = this.createElement('DIV', {
@@ -837,7 +856,7 @@ export default {
          this.insertElement(dom)
       };
       window.Squire.prototype.insertVideo = function (src, data = {}) {
-        var scrollTop = editorDom.scrollTop;
+        var scrollTop = document.documentElement.scrollTop;
         var video = this.createElement('VIDEO', {
           'src': src,
           'class': 'halo-video-area',
@@ -864,10 +883,10 @@ export default {
           me.setToast('不支持播放');
         }
         this.insertElement(p);
-        setTimeout(() => { editorDom.scrollTop = scrollTop; }, 100);
+        setTimeout(() => { document.documentElement.scrollTop = scrollTop; }, 100);
       };
       window.Squire.prototype.insertLink = function (link, text) {
-        var scrollTop = editorDom.scrollTop;
+        var scrollTop = document.documentElement.scrollTop;
         var img = `<img class="link-img" src='/static/img/icon_link@3x.png'></img>`;
         var a = `<a class="halo-link-mes"  data-url="${link}" target="_blank">${text}</a>`
         const del = me.generateDelLinkIcon()
@@ -878,12 +897,10 @@ export default {
         p.innerHTML = img + a;
         p.appendChild(del)
         this.insertElement(p);
-        setTimeout(() => { editorDom.scrollTop = scrollTop; }, 50);
+        setTimeout(() => { document.documentElement.scrollTop = scrollTop; }, 50);
       };
       me.sticky();
-      if(this.disabled){
-        this.editorDom.contenteditable = 'false'
-      }
+      
     },
     generateDelLinkIcon() {
       const me = this
@@ -932,7 +949,7 @@ export default {
           }
           imgCount += 1
         } else if (value.className === 'halo-video-content') { // 视频
-          const id = value.dataset.video.id
+          const id = JSON.parse(value.dataset.video).id
           videoIds.push(id)
           isNotParagraph = false
         } else if (value.className === 'halo-link') { // 外链

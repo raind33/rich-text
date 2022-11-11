@@ -2,10 +2,10 @@
   <div class="tools" v-if="editor.fontInfo">
     <div class="tools-content">
       <el-tooltip class="item" effect="dark" content="撤回" placement="top">
-        <img id="undo" :src="require('@/assets/img/tools/tools_back@3x.png')" width="40" height="40" alt="" srcset="" @click="back($event)">
+        <img id="undo" :style="!backState.undo ? {transform: 'rotateY(180deg)'}:''" :src="backState.undo ? require('@/assets/img/tools/tools_back@3x.png') : require('@/assets/img/tools/tools_forwar@3x.png')" width="40" height="40" alt="" srcset="" @click="back($event)">
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="反撤回" placement="top">
-        <img id="redo" :src="require('@/assets/img/tools/tools_forwar@3x.png')" width="40" height="40" alt="" srcset="" @click="forward($event)">
+        <img id="redo" :style="backState.redo ? {transform: 'rotateY(180deg)'}:''" :src="backState.redo ? require('@/assets/img/tools/tools_back@3x.png') : require('@/assets/img/tools/tools_forwar@3x.png')" width="40" height="40" alt="" srcset="" @click="forward($event)">
       </el-tooltip>
       <el-divider class="m12" direction="vertical"></el-divider>
       <el-tooltip class="item" effect="dark" content="清除格式" placement="top">
@@ -36,7 +36,7 @@
           </el-tooltip>
         </div>
         <ul v-click-outside="handlePopover" class="tools-font">
-          <li v-for="(item, index) in fontsizes" :class="[activeFontsize === item.value ? 'active' : '']" :key="index" data-editor-id="setFontSize" @click="setFont($event, item.value)">
+          <li v-for="(item, index) in fontsizes" :class="[(activeFontsize + 'px') === item.value ? 'active' : '']" :key="index" data-editor-id="setFontSize" @click="setFont($event, item.value)">
             <span :style="{fontSize:item.value}">{{ item.name }}</span>
             <span style="font-size: 10px;">{{item.desc}}</span>
           </li>
@@ -87,8 +87,12 @@
             </el-tooltip>
           </div>
           <ul v-click-outside="handlePopover" class="tools-title_content">
-            <li data-editor-id="makeHeader" @click="setStyle('makeUnorderedList')">无序列表</li>
-            <li data-editor-id="makeHeader" @click="setStyle('makeOrderedList')">有序列表</li>
+            <li data-editor-id="makeHeader" @click="updatePosition(() => {
+              setStyle('makeUnorderedList')
+            })">无序列表</li>
+            <li data-editor-id="makeHeader" @click="updatePosition(() => {
+              setStyle('makeOrderedList')
+            })">有序列表</li>
           </ul>
         </el-popover>
       </div>
@@ -113,10 +117,10 @@
         <img :src="require('@/assets/img/tools/tools_indent@3x.png')" width="40" height="40" alt="" srcset="" @click="setStyle('setIndent')">
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="文字颜色" placement="top">
-        <div class="wrap">
+        <div class="wrap" @click="selectColorPicker">
           <img :src="require('@/assets/img/tools/tools_color@3x.png')" width="24" height="40" alt="" srcset="">
           <img :src="require('@/assets/img/tools/tools_arrow@3x.png')" width="16" height="40" alt="" srcset="">
-          <colorPicker v-model="color" @change="setColor" />
+          <colorPicker ref="colorPicker" v-model="color" @change="setColor" />
         </div>
       </el-tooltip>
 
@@ -186,6 +190,10 @@ export default {
         bold: false,
         italic: false,
         underline: false
+      },
+      backState: {
+        redo: false,
+        undo: false
       }
     }
   },
@@ -205,7 +213,10 @@ export default {
     },
     styleStatus() {
       return this.editor.styleStatus
-    }
+    },
+    doState() {
+      return this.editor.backState
+    },
   },
   watch: {
     'fontInfo.size'(val) {
@@ -214,6 +225,12 @@ export default {
     styleStatus: {
       handler(val) {
         this.statusInfo = val
+      },
+      immediate: true
+    },
+    doState: {
+      handler(val) {
+        this.backState = val
       },
       immediate: true
     }
@@ -226,7 +243,12 @@ export default {
     }
   },
   methods: {
-    
+    selectColorPicker(){
+      // fix 点击富文本选中丢失
+      const wrap = this.$refs['colorPicker'].$el
+      const btn = wrap.querySelector('.colorBtn')
+      btn.click()
+    },
     insertLink() {
       this.editor.showLink()
     },
@@ -234,7 +256,11 @@ export default {
       this.editor.clearFormat()
     },
     setColor(val) {
-      this.editor.setColor(val)
+      console.log('文字颜色')
+      this.updatePosition(() => {
+
+        this.editor.setColor(val)
+      })
     },
     setStyle(type, key, flag) {
       this.popoverVisibleList = false
@@ -257,9 +283,11 @@ export default {
     },
     back(e) {
       this.editor.setContent(e)
+      this.backState = this.editor.editor.getUndoOrRedoState()
     },
     forward(e) {
       this.editor.setContent(e)
+      this.backState = this.editor.editor.getUndoOrRedoState()
     },
     setTitle(e, type) {
       this.headType = type
@@ -281,9 +309,21 @@ export default {
       this.popoverVisibleFont = false
       this.popoverVisibleList = false
     },
+    // todo 富文本设置样式位置会回到顶部
+    updatePosition(fn) {
+      const scrollTop = document.documentElement.scrollTop
+      fn  && fn()
+      setTimeout(() => {
+        document.documentElement.scrollTop = scrollTop
+      }, 50);
+
+    },
     setAlign(e, type) {
-      this.editor.setAlign(e, type)
-      this.popoverVisible = false
+      this.updatePosition(() =>{
+
+        this.editor.setAlign(e, type)
+        this.popoverVisible = false
+      })
     },
     setFont(e, type) {
       this.activeFontsize = parseInt(type)
@@ -342,6 +382,7 @@ export default {
     font-size: 18px;
     display: flex;
     align-items: center;
+    cursor: pointer;
 
   }
   .disable{
@@ -358,11 +399,13 @@ export default {
     position: absolute;
     width: 100%;
     left: 0;
+    z-index: -1;
     height: 100%;
     .colorBtn{
       width: 100%;
       height: 100%;
       opacity: 0;
+      cursor: pointer;
     }
   }
 }
@@ -385,6 +428,12 @@ export default {
   li{
     display: flex;
     align-items: center;
+    cursor: pointer;
+    &.active{
+      span:nth-child(1){
+        color: red;
+      }
+    }
     span:nth-child(2){
       margin-left: 5px;
     }

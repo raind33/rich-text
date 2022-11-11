@@ -15,15 +15,21 @@
     ol, ul{
         margin: 0 1em;
         padding: 0 1em;
-        list-style: decimal;
+        list-style-type: decimal;
+        li{
+            list-style-position: inside;
+        }
     }
+    
     ol > li{
-        list-style: decimal;
+        list-style-type: decimal;
         margin-bottom: 20px;
+        font-size: 17px;
     }
     ul > li{
-        list-style: disc;
+        list-style-type: disc;
         margin-bottom: 20px;
+        font-size: 17px;
     }
     .fixed-top {
         position: fixed !important;

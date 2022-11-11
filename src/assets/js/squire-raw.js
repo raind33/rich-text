@@ -3301,7 +3301,12 @@ proto.saveUndoState = function (range) {
 
     return this;
 };
-
+proto.getUndoOrRedoState = function () {
+    return {
+        undo: this._undoIndex !== 0 || !this._isInUndoState,
+        redo: this._undoIndex + 1 < this._undoStackLength && this._isInUndoState
+    }
+}
 proto.undo = function () {
     // Sanity check: must not be at beginning of the history stack
     if (this._undoIndex !== 0 || !this._isInUndoState) {
