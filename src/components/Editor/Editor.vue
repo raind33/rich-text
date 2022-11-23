@@ -215,6 +215,7 @@ export default {
     },
     setCursor() {
       this.cursorStyle = this.cursorStyle === cursorImg ? 'auto' : cursorImg
+      console.log(this.styleStatus, 999)
       this.curStyle = {...this.styleStatus}
       this.editorDom.addEventListener('mouseup', this.handleCopyFormatUp)
     },
@@ -224,6 +225,7 @@ export default {
         this.editor.removeAllFormatting()
         Object.keys(this.curStyle).forEach(key => {
           if(this.curStyle[key]) {
+            if(key === 'size' && this.curStyle[key] === 17) return
             const method = keyToEditorMethod[key]
             method && this.editor[method](key === 'size' || key === 'color' ? this.curStyle[key] : undefined)
           }
