@@ -3720,17 +3720,18 @@ var splitBlock = function (self, block, node, offset) {
         splitProperties = null,
         nodeAfterSplit = split(node, offset, block.parentNode, self._root),
         config = self._config;
-
+    var temAttr
     if (!splitTag) {
         splitTag = config.blockTag;
         // fix 由于项目以前维护者把blockAttributes设置了类名，导致hasTagAttributes中校验时匹配有问题
         var attr = {...config.blockAttributes}
-        delete attr.class
         splitProperties = attr;
+        temAttr = {...attr}
+        delete temAttr.class
     }
 
     // Make sure the new node is the correct type.
-    if (!hasTagAttributes(nodeAfterSplit, splitTag, splitProperties)) {
+    if (!hasTagAttributes(nodeAfterSplit, splitTag, temAttr || splitProperties)) {
         block = createElement(nodeAfterSplit.ownerDocument,
             splitTag, splitProperties);
         if (nodeAfterSplit.dir) {

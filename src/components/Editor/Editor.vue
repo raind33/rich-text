@@ -595,6 +595,7 @@ export default {
         this.currentImg = ''
       } else {
         if (type === 'replace') {
+          this.removePreviousImg && this.removePreviousImg()
           this.editor['insertImages'](imgSrc, {
             src: imgSrc,
             img: imgSrc,
@@ -656,7 +657,8 @@ export default {
           range.collapse(false)
           me.range = range
           const replaceInput = document.querySelector('.replace-input')
-          me.removeParentByClass(e.target, 'halo-img-content')
+          me.removePreviousImg = () => me.removeParentByClass(e.target, 'halo-img-content')
+          
           replaceInput.click()
         }
         delBtn.onclick = function(e) {
@@ -760,9 +762,12 @@ export default {
             'class': 'halo-paragraph-title',
           })
           h2.innerHTML = content
-          return this.insertElement(h2)
+          this.insertElement(h2)
+          
+          return
         }
-        return this.modifyBlocks(function (frag) {
+        let container
+        this.modifyBlocks(function (frag) {
           var output = this._doc.createDocumentFragment();
           var block = frag;
           let dom
@@ -775,16 +780,25 @@ export default {
           const cla = dom === 'H2' ? 'halo-paragraph-title' : 'halo-paragraph';
           // eslint-disable-next-line no-cond-assign
           while (block = window.Squire.getNextBlock(block)) {
+            container = this.createElement(dom, { 'class': cla }, [window.Squire.empty(block)])
             // debugger
             output.appendChild(
               // 段落才能添加标题
               Array.from(block.classList).indexOf('halo-img-content') > -1
                 ? block
-                : this.createElement(dom, { 'class': cla }, [window.Squire.empty(block)])
+                : container
             );
           }
+          
           return output;
         });
+        const selection = window.getSelection()
+        const range = document.createRange()
+        console.log(container)
+        range.setStart(container, 1)
+        range.collapse(true)
+        selection.removeAllRanges()
+        selection.addRange(range)
       };
       window.Squire.prototype.insertImages = function (src, data = {}, range) {
         // 1、不处理已上传失败情况了  2、每次粘贴或缓存获取，重新计算待上传图片

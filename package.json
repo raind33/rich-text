@@ -1,7 +1,7 @@
 {
   "name": "haluo-biz",
   "description": "rich text",
-  "version": "0.1.11",
+  "version": "0.1.14",
   "type": "module",
   "module": "./dist/haluo-biz.js",
   "main": "./dist/haluo-biz.umd.cjs",

@@ -150,7 +150,7 @@
       <el-tooltip class="item" effect="dark" content="插入视频" placement="top">
         <img :src="require('@/assets/img/tools/tools_video@3x.png')" width="40" height="40" alt="" srcset="" @click="insertVideo">
       </el-tooltip>
-      <el-tooltip v-if="!showToolsArticle" class="item" effect="dark" content="插入文章" placement="top">
+      <el-tooltip v-if="showToolsArticle" class="item" effect="dark" content="插入文章" placement="top">
         <img :src="require('@/assets/img/tools/tools_article@3x.png')" width="40" height="40" alt="" srcset="" @click="insertArticle">
       </el-tooltip>
       <el-tooltip class="item" effect="dark" content="采集文章" placement="top">
