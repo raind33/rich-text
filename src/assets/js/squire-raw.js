@@ -2268,6 +2268,7 @@ function monitorShiftKey (event) {
 }
 
 var onPaste = function (event) {
+    if(event.target.tagName === 'TEXTAREA') return true
     var clipboardData = event.clipboardData;
     var items = clipboardData && clipboardData.items;
     var choosePlain = this.isShiftDown;
